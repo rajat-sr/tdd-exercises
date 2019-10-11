@@ -1,19 +1,35 @@
 import React from 'react';
 import App from './App';
 import { shallow } from 'enzyme';
+import apis from './mockApis';
 
 describe('<App />', () => {
   let wrapper;
 
+  beforeAll(() => {
+    apis.fetchCounterValue = jest.fn().mockReturnValue(
+      Promise.resolve({
+        status: 200,
+        data: {
+          initial: 50,
+        },
+      }),
+    );
+  });
+
+  afterAll(() => {
+    apis.fetchCounterValue.mockClear();
+  })
+
   beforeEach(() => {
-    wrapper = shallow(<App />);
+    wrapper = shallow(<App />, { disableLifecycleMethods: true });
   });
 
   it('should render a counter value as <h1 /> HTML tag', () => {
     expect(wrapper.find('h1')).toHaveLength(1);
   });
 
-  it('should render a counter with initial value 0', () => {
+  it('should render a counter with initial value 0 before API call', () => {
     expect(wrapper.find('h1').text()).toEqual('0');
   });
 
@@ -36,5 +52,16 @@ describe('<App />', () => {
     const decrementButton = wrapper.find('button').at(1);
     decrementButton.simulate('click');
     expect(wrapper.find('h1').text()).toBe('-1');
+  });
+
+  it('should update the counter value with data fetched from API', done => {
+    const spyDidMount = jest.spyOn(App.prototype, 'componentDidMount');
+    expect(spyDidMount).not.toHaveBeenCalled();
+    const didMount = wrapper.instance().componentDidMount();
+    expect(spyDidMount).toHaveBeenCalled();
+    didMount.then(() => {
+      expect(wrapper.update().state().counter).toBe(50);
+      done();
+    });
   });
 });
