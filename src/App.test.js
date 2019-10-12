@@ -33,11 +33,12 @@ describe('<App />', () => {
     expect(wrapper.find('h1').text()).toEqual('0');
   });
 
-  it('should render two buttons - Increment and Decrement', () => {
+  it('should render three buttons - Increment, Decrement and Randomize', () => {
     const buttons = wrapper.find('button').map(button => button.text());
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(3);
     expect(buttons).toContain('Increment');
     expect(buttons).toContain('Decrement');
+    expect(buttons).toContain('Randomize');
   });
 
   it('should render Increment button that should increment the value of counter by 1', () => {
@@ -64,4 +65,13 @@ describe('<App />', () => {
       done();
     });
   });
+
+  it('should render Randomize button that sets counter to a random integer value between -500 and +500', () => {
+    expect(wrapper.find('h1').text()).toBe('0');
+    const randomizeButton = wrapper.find('button').at(2);
+    randomizeButton.simulate('click');
+    expect(+wrapper.find('h1').text()).not.toBe(NaN);
+    expect(+wrapper.find('h1').text()).toBeGreaterThanOrEqual(-500);
+    expect(+wrapper.find('h1').text()).toBeLessThan(500);
+  })
 });

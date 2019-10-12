@@ -16,6 +16,12 @@ class App extends React.Component {
     this.setState({ counter: currentValue + by });
   }
 
+  setRandomCounterValue() {
+    const sign = Math.random() < 0.5 ? -1 : 1;
+    const randomNumber = Math.floor(500 * Math.random());
+    this.setState({ counter: sign * randomNumber });
+  }
+
   render() {
     const { counter } = this.state;
 
@@ -27,6 +33,9 @@ class App extends React.Component {
         </button>
         <button type="button" onClick={() => this.changeCounterValue(-1)}>
           Decrement
+        </button>
+        <button type="button" onClick={() => this.setRandomCounterValue()}>
+          Randomize
         </button>
       </>
     );
