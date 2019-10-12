@@ -19,7 +19,7 @@ describe('<App />', () => {
 
   afterAll(() => {
     apis.fetchCounterValue.mockClear();
-  })
+  });
 
   beforeEach(() => {
     wrapper = shallow(<App />, { disableLifecycleMethods: true });
@@ -33,12 +33,13 @@ describe('<App />', () => {
     expect(wrapper.find('h1').text()).toEqual('0');
   });
 
-  it('should render three buttons - Increment, Decrement and Randomize', () => {
+  it('should render four buttons - Increment, Decrement, Randomize and Add Counter', () => {
     const buttons = wrapper.find('button').map(button => button.text());
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(4);
     expect(buttons).toContain('Increment');
     expect(buttons).toContain('Decrement');
     expect(buttons).toContain('Randomize');
+    expect(buttons).toContain('Add Counter');
   });
 
   it('should render Increment button that should increment the value of counter by 1', () => {
@@ -61,7 +62,7 @@ describe('<App />', () => {
     const didMount = wrapper.instance().componentDidMount();
     expect(spyDidMount).toHaveBeenCalled();
     didMount.then(() => {
-      expect(wrapper.update().state().counter).toBe(50);
+      expect(wrapper.update().state().counters[0]).toBe(50);
       done();
     });
   });
@@ -73,5 +74,14 @@ describe('<App />', () => {
     expect(+wrapper.find('h1').text()).not.toBe(NaN);
     expect(+wrapper.find('h1').text()).toBeGreaterThanOrEqual(-500);
     expect(+wrapper.find('h1').text()).toBeLessThan(500);
-  })
+  });
+
+  it('has Add Counter button that adds an aditional counter in the <App /> component on every click', () => {
+    expect(wrapper.find('h1')).toHaveLength(1);
+    const addCounterButton = wrapper.find('button').at(3);
+    addCounterButton.simulate('click');
+    addCounterButton.simulate('click');
+    addCounterButton.simulate('click');
+    expect(wrapper.find('h1')).toHaveLength(4);
+  });
 });
